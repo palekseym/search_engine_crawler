@@ -13,6 +13,4 @@ COPY crawler crawler
 ENV CHECK_INTERVAL 10
 ENV EXCLUDE_URLS '.*github.com'
 
-ENTRYPOINT ["python", "-u", "crawler/crawler.py"]
-
-CMD ["https://vitkhab.github.io/search_engine_test_site/"]
+CMD ["python", "-u", "crawler/crawler.py", "https://vitkhab.github.io/search_engine_test_site/"]
