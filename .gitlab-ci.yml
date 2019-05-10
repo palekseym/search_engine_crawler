@@ -10,7 +10,6 @@ build:
   services:
     - docker:dind
   script: 
-    - install_git
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
     - docker build -t "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG" .
     - docker push "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG"
@@ -33,9 +32,6 @@ release:
     - docker push "$CI_PROJECT_PATH:$(cat VERSION)"
 
 .helper_functions: &helper_functions |
-  function install_git() {
-    apk add -U openssl curl tar gzip bash ca-certificates git
-  }
   function docker_hub_login() {
   docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
   }
