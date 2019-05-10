@@ -15,7 +15,7 @@ build:
     - docker build -t "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG" .
     - docker push "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG"
     - export
-    - git rev-parse --abbrev-ref HEAD
+    - cat VERSION
 
 
 test:
