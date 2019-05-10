@@ -14,9 +14,6 @@ build:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
     - docker build -t "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG" .
     - docker push "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG"
-    - export
-    - cat VERSION
-
 
 test:
   stage: unittest
@@ -32,8 +29,8 @@ release:
   script:
     - docker_hub_login
     - docker build -t "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG" .
-    - docker tag "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG" "$CI_PROJECT_PATH:$CI_COMMIT_TAG"
-    - docker push "$CI_PROJECT_PATH:$CI_COMMIT_TAG"
+    - docker tag "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG" "$CI_PROJECT_PATH:$(cat VERSION)"
+    - docker push "$CI_PROJECT_PATH:$(cat VERSION)"
   only:
     - tags
 
