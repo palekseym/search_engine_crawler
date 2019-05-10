@@ -14,6 +14,7 @@ build:
     - docker build -t "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG" .
     - docker push "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG"
     - export
+    - cat .git/HEAD
 
 test:
   stage: unittest
