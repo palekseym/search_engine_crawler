@@ -36,6 +36,9 @@ release:
     - tags
 
 .helper_functions: &helper_functions |
+  function install_git() {
+    apk add -U openssl curl tar gzip bash ca-certificates git
+  }
   function docker_hub_login() {
   docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
   }
