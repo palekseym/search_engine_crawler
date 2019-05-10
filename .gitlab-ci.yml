@@ -3,7 +3,7 @@ image: docker:latest
 stages:
   - build
   - unittest
-  - deploy
+  - release
 
 build:
   stage: build
@@ -21,9 +21,32 @@ test:
   script:
     - docker run "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG" python -m unittest discover -s tests/
 
-deploy:
-  stage: deploy
+release:
+  stage: release
   services:
     - docker:dind
   script:
-    - echo "stub"
+    - docker_hub_login
+    - docker build -t "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG" .
+    - docker tag "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG" "$CI_PROJECT_PATH:$CI_COMMIT_TAG"
+    - docker push "$CI_PROJECT_PATH:$CI_COMMIT_TAG"
+  only:
+    - tags
+
+.helper_functions: &helper_functions |
+  function docker_hub_login() {
+  docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
+  }
+
+  function docker_host_connect() {
+  if ! docker info &>/dev/null; then
+    if [ -z "$DOCKER_HOST" -a "$KUBERNETES_PORT" ]; then
+      export DOCKER_HOST='tcp://localhost:2375'
+    fi
+  fi
+  }
+
+  docker_host_connect
+
+before_script:
+  - *helper_functions
