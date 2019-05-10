@@ -31,8 +31,6 @@ release:
     - docker build -t "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG" .
     - docker tag "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG" "$CI_PROJECT_PATH:$(cat VERSION)"
     - docker push "$CI_PROJECT_PATH:$(cat VERSION)"
-  only:
-    - tags
 
 .helper_functions: &helper_functions |
   function install_git() {
