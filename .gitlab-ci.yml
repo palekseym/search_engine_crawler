@@ -4,6 +4,7 @@ stages:
   - build
   - unittest
   - release
+  - staging
 
 build:
   stage: build
@@ -31,6 +32,17 @@ release:
     - docker tag "$CI_PROJECT_PATH:$CI_COMMIT_REF_SLUG" "$CI_PROJECT_PATH:$(cat VERSION)"
     - docker push "$CI_PROJECT_PATH:$(cat VERSION)"
 
+staging:
+  stage: staging
+  script:
+    - install_helm
+    - git clone "http://gitlab-ci-ip/$CI_PROJECT_NAMESPACE/search_engine_deploy.git"
+    - helm dep update search_engine_deploy/release
+    - helm upgrade --install --wait --namespace="$KUBE_NAMESPACE" "crawler-stage" search_engine_deploy/release
+  variables:
+    KUBE_NAMESPACE: staging
+  when: manual
+
 .helper_functions: &helper_functions |
   function docker_hub_login() {
   docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
@@ -43,7 +55,12 @@ release:
     fi
   fi
   }
-
+  function install_helm() {
+  apk add -U openssl curl tar gzip bash ca-certificates git
+  curl https://kubernetes-helm.storage.googleapis.com/helm-v2.7.2-linux-amd64.tar.gz | tar zx
+  mv linux-amd64/helm /usr/bin/
+  helm init --client-only
+  }
   docker_host_connect
 
 before_script:
